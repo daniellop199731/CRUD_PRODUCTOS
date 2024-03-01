@@ -108,10 +108,14 @@ const MostrarProductos = () => {
     }
     
     const ejercicioLogico = async() => {
-        await axios ({method:'GET', url: url+'/ejercicioLogico/'+parametroEjercicio, data:{}}).then(function(respuesta){            
-            var lista = respuesta.data;
-            setRespuestaEjercicio(lista);
-        })
+        if(parametroEjercicio > 0){
+            await axios ({method:'GET', url: url+'/ejercicioLogico/'+parametroEjercicio, data:{}}).then(function(respuesta){            
+                var lista = respuesta.data;
+                setRespuestaEjercicio(lista);
+            })
+        } else {
+            mostrarAlerta('Debe ingresar un valor numerico mayor a cero');
+        }
     }
 
     const cargarDatos = async() => {
@@ -174,7 +178,7 @@ const MostrarProductos = () => {
             <table>
                 <tbody>
                     {datosSobreGatos.map( (d,i)=>(
-                        <tr><td>{i+1}</td>&nbsp;<td>{d}</td></tr>
+                        <tr><td>{i+1}&nbsp;{d}</td></tr>
                     ))}
                 </tbody>
             </table>                    
@@ -186,101 +190,115 @@ const MostrarProductos = () => {
                     {datoInutil}
                 </tbody>
             </table>                    
-        </div>        
-        <div className='container-fluid'>            
-            <div className='row mt-3'>
-                <div className='col-md-4 offset-md-4'>
-                    <div className='d-grid mx-auto'>
-                        <button onClick={() => openModal(1)} className='btn btn-dark' data-bs-toggle='modal' data-bs-target='#modalProductos'>
-                            <i className='fa-solid fa-circle-plus'></i> Agregar
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div className='row mt-3'>
-                <div className='col-12 col-lg-8 offset-0 offset-lg-2'>
-                    <div className='table-responsive'>
-                        <table className='table table-bordered'>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Producto</th>
-                                    <th>Descripcio</th>
-                                    <th>Precio</th>
-                                    <th>Cantidad</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody className='table-group-divider'>
-                                {productos.map( (p,i)=>(
-                                    <tr key={p.id}>
-                                        <td>{(i+1)}</td>
-                                        <td>{p.nombre}</td>
-                                        <td>{p.descripcion}</td>
-                                        <td>{p.precio}</td>
-                                        <td>{p.cantidad}</td>
-                                        <td>
-                                            <button onClick={() => openModal(2, p.id, p.nombre, p.descripcion, p.precio, p.cantidad)} 
-                                                className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProductos'>
-                                                <i className='fa-solid fa-edit'></i>
-                                            </button>
-                                            &nbsp;
-                                            <button onClick={() => eliminarProducto(p.id, p.nombre)} className='btn btn-danger'>
-                                                <i className='fa-solid fa-trash'></i>
-                                            </button>                                            
-                                        </td>
-                                    </tr>
-                                ))
-                                }
-                            </tbody>
-                        </table>
-                        
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>Valor del inventario: {valorTotalIntentario}</td>
-                                </tr>
-                                <tr>
-                                    <td>Producto cuyo precio es el mayor: {productoMasCaro}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        &nbsp;
-                        <table>
-                            <thead>
-                                <tr><th>Ejercicio logico</th></tr>
-                            </thead>
-
-                            <tbody>
-                                <tr>
-                                    <td>
-                                    <input type='text' id='parametroEjercicio' className='form-control' placeholder='Valor' value={parametroEjercicio}
-                                        onChange={(e)=> setParametroEjercicio(e.target.value)}></input>                                        
-                                    </td>
-                                    <td>
-                                        <button onClick={() => ejercicioLogico()} className='btn btn-success'>
-                                            Ejecutar
-                                        </button>                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Resultado</td>
-                                </tr>                                
-                                {
-                                    respuestaEjercicio.map( (r,i)=>(
-                                        <tr><td>
-                                        {respuestaEjercicio[i].map ( (t,j) =>(
-                                            <span>&nbsp;{t}&nbsp;</span>
-                                        ))
-                                        }</td></tr>
-                                    ))
-                                }                                                             
-                            </tbody>
-                        </table>                        
-                    </div>
-                </div>
-            </div>
         </div>
+        <div className="row">
+            <div className="col-sm-7">                
+                <div className='container-fluid'>            
+                    <div className='row mt-3'>
+                        <div className='col-md-4 offset-md-4'>
+                            <div className='d-grid mx-auto'>
+                                <button onClick={() => openModal(1)} className='btn btn-dark' data-bs-toggle='modal' data-bs-target='#modalProductos'>
+                                    <i className='fa-solid fa-circle-plus'></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='row mt-3'>
+                        <div className='col-md-14'>
+                            <div className='table-responsive'>
+                                <table className='table table-bordered'>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Producto</th>
+                                            <th>Descripcio</th>
+                                            <th>Precio</th>
+                                            <th>Cantidad</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className='table-group-divider'>
+                                        {productos.map( (p,i)=>(
+                                            <tr key={p.id}>
+                                                <td>{(i+1)}</td>
+                                                <td>{p.nombre}</td>
+                                                <td>{p.descripcion}</td>
+                                                <td>{p.precio}</td>
+                                                <td>{p.cantidad}</td>
+                                                <td>
+                                                    <button onClick={() => openModal(2, p.id, p.nombre, p.descripcion, p.precio, p.cantidad)} 
+                                                        className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProductos'>
+                                                        <i className='fa-solid fa-edit'></i>
+                                                    </button>
+                                                    &nbsp;
+                                                    <button onClick={() => eliminarProducto(p.id, p.nombre)} className='btn btn-danger'>
+                                                        <i className='fa-solid fa-trash'></i>
+                                                    </button>                                            
+                                                </td>
+                                            </tr>
+                                        ))
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <div className="container">
+                                    <div className="row">
+                                        <div className="col-sm">
+                                            <div className="row">
+                                                <div className="col-sm">
+                                                    Valor del inventario: {valorTotalIntentario}
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm">
+                                                    Producto cuyo precio es el mayor: {productoMasCaro}
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>                      
+                                </div>                                                                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+            <div className="col-sm-5">   
+                <div className="row">
+                    <div className="col-sm">
+                        <b>Ejercicio logico</b>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm">
+                        <input type='text' id='parametroEjercicio' className='form-control' placeholder='Valor' value={parametroEjercicio}
+                                    onChange={(e)=> setParametroEjercicio(e.target.value)}></input>
+                    </div>      
+                    <div className="col-sm">
+                        <button onClick={() => ejercicioLogico()} className='btn btn-success'>
+                                    Ejecutar
+                        </button>                                            
+                    </div>                                      
+                </div>  
+                <div className="row">
+                    <div className="col-sm-2">
+                        Resultado
+                    </div>
+                </div>                                           
+                <table>
+                    <tbody>                              
+                        {
+                            respuestaEjercicio.map( (r,i)=>(
+                                <tr><td>
+                                {respuestaEjercicio[i].map ( (t,j) =>(
+                                    <span>&nbsp;{t}&nbsp;</span>
+                                ))
+                                }</td></tr>
+                            ))
+                        }                                                             
+                    </tbody>
+                </table> 
+            </div> 
+        </div>                
         <div id='modalProductos' className='modal fade'>
             <div className='modal-dialog'>
                 <div className='modal-content'>
